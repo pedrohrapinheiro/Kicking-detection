@@ -1,165 +1,346 @@
-AI Kick Detection System
-Overview
+# 🥋 AI Kick Detection System
 
-An AI-powered kick detection system built using computer vision and pose estimation techniques. The project analyzes body movement in real time and detects kicking actions from a webcam or video input. The goal is to create a foundation for applications in sports analysis, martial arts training, VR interaction, and movement tracking.
+<div align="center">
 
-Problem
+### Real-time kick detection using Computer Vision and Pose Estimation
 
-Traditional martial arts and sports training often depends heavily on human observation and feedback. This creates several limitations:
+Detect, analyze, and track kicking movements using AI-powered body landmark recognition.
 
-Coaches cannot analyze every movement in detail
-Manual analysis takes time
-Small technique errors can be missed
-Beginners may not receive immediate feedback
-Performance tracking can be inconsistent
+Python • OpenCV • MediaPipe • Machine Learning
 
-This project aims to provide automated movement analysis and kick detection using AI and computer vision.
+</div>
 
-Screenshots
-Real-time pose tracking
+---
 
-[Insert screenshot here]
+# 📖 Overview
 
-Kick detection visualization
+The **AI Kick Detection System** is a computer vision project designed to detect and analyze kicking movements in real time using body pose estimation.
 
-[Insert screenshot here]
+The system captures movement through a webcam or video input, extracts body landmarks, and identifies kick actions based on movement patterns.
 
-Landmark tracking interface
+Potential applications include:
 
-[Insert screenshot here]
+🏋️ Sports performance analysis
+🥋 Martial arts training
+🎮 VR interaction systems
+🤖 Human movement analysis
+📊 Performance tracking
 
-Demo Video / GIF
+---
 
-Demo GIF:
+# ❓ Problem
 
-[Insert GIF here]
+Martial arts and sports training often rely heavily on human observation.
 
-Video demonstration:
+This creates several challenges:
 
-[Insert YouTube/demo link here]
+* Coaches cannot analyze every movement precisely
+* Small technical mistakes may go unnoticed
+* Beginners often lack immediate feedback
+* Manual performance analysis takes time
+* Progress tracking can become inconsistent
 
-Example features shown:
+The objective of this project is to create an intelligent system capable of providing **real-time automated movement analysis**.
 
-Real-time body landmark tracking
-Kick detection
-Visual pose feedback
-Live movement processing
-Approach
+---
 
-The system follows the following pipeline:
+# 🚀 Features
 
-Capture frames from webcam or video input
-Detect body landmarks using pose estimation
-Extract important landmarks:
-Shoulders
-Hips
-Knees
-Ankles
-Feet
-Convert landmark coordinates into numerical features
-Analyze movement patterns and joint relationships
-Detect kicking actions based on movement rules or trained models
-Display the detected kick in real time
-Technologies Used
+✅ Real-time webcam input
 
-Programming Language:
+✅ Human pose detection
 
-Python
+✅ Body landmark extraction
 
-Computer Vision:
+✅ Joint tracking
 
-OpenCV
+✅ Kick movement detection
 
-Pose Estimation:
+✅ Live visual feedback
 
-MediaPipe
+✅ AI movement analysis foundation
 
-Machine Learning:
+---
 
-Scikit-learn (if used)
-TensorFlow/PyTorch (if used)
+# 🖼 Screenshots
 
-Additional Libraries:
+## Pose Tracking
 
-NumPy
-Matplotlib
+<p align="center">
+<img src="images/pose-tracking.png" width="700">
+</p>
 
-Development Environment:
+---
 
-VS Code
-Current Features
-Real-time webcam input
-Human pose detection
-Body landmark extraction
-Joint tracking
-Kick movement detection
-Visual feedback overlay
-Future Improvements
+## Kick Detection Interface
 
-Planned improvements include:
+<p align="center">
+<img src="images/kick-detection.png" width="700">
+</p>
 
-Better accuracy
-Train a custom machine learning model
-Improve false positive reduction
-Increase robustness to camera angles
-Multiple kick types
+---
 
-Add support for:
+## Landmark Visualization
 
-Front kick
-Roundhouse kick
-Side kick
-Back kick
-Axe kick
-Performance metrics
+<p align="center">
+<img src="images/landmarks.png" width="700">
+</p>
 
-Provide statistics such as:
+---
 
-Kick speed
-Kick height
-Reaction time
-Accuracy score
-VR integration
-Use movement tracking for VR sparring applications
-Real-time interaction with virtual opponents
-Mobile and web deployment
-Deploy as a web application
-Create a mobile version
-User interface improvements
-Better visualization
-Analytics dashboard
-Training progress history
-Installation
+# 🎥 Demo
+
+### Demo GIF
+
+<p align="center">
+<img src="images/demo.gif" width="700">
+</p>
+
+---
+
+### Video Demonstration
+
+[Insert demo video link here]
+
+---
+
+# ⚙️ How It Works
+
+The system follows the pipeline below:
+
+```text
+Camera Input
+      ↓
+Pose Detection
+      ↓
+Landmark Extraction
+      ↓
+Feature Processing
+      ↓
+Movement Analysis
+      ↓
+Kick Classification
+      ↓
+Real-time Feedback
+```
+
+### Step-by-step process
+
+**1. Capture video frames**
+
+* Webcam or video input
+
+**2. Detect body landmarks**
+
+* Extract pose information
+
+**3. Select important landmarks**
+
+Important body points:
+
+* Left/Right Shoulder
+* Left/Right Hip
+* Left/Right Knee
+* Left/Right Ankle
+* Feet landmarks
+
+**4. Generate movement features**
+
+Examples:
+
+* Joint angles
+* Relative positions
+* Distances
+* Motion velocity
+
+**5. Analyze movement**
+
+Movement patterns are evaluated to determine whether a kick occurred.
+
+**6. Return results**
+
+Display kick detection results in real time.
+
+---
+
+# 🛠 Technologies Used
+
+### Programming Language
+
+* Python
+
+### Computer Vision
+
+* OpenCV
+
+### Pose Estimation
+
+* MediaPipe
+
+### Machine Learning
+
+* Scikit-learn *(optional)*
+* TensorFlow *(optional)*
+* PyTorch *(optional)*
+
+### Libraries
+
+* NumPy
+* Matplotlib
+
+### Development Environment
+
+* VS Code
+
+---
+
+# 📂 Project Structure
+
+```text
+kick-detection/
+│
+├── images/
+│   ├── pose-tracking.png
+│   ├── kick-detection.png
+│   └── demo.gif
+│
+├── models/
+│
+├── data/
+│
+├── main.py
+├── requirements.txt
+├── README.md
+│
+└── utils/
+```
+
+---
+
+# 🔧 Installation
+
+Clone the repository:
+
+```bash
 git clone [repository-url]
+```
 
+Move into the project directory:
+
+```bash
 cd kick-detection
+```
 
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
+Run the project:
+
+```bash
 python main.py
-Usage
+```
 
-Run the program:
+---
 
-python main.py
+# 🎯 Usage
 
-Position yourself in front of the camera and perform kicking movements.
+1. Open the application
 
-The system will track body landmarks and attempt to detect kicks in real time.
+2. Stand in front of the camera
 
-Project Status
+3. Perform kicking movements
 
-Currently in active development.
+4. Observe real-time detection and tracking
 
-This project is part of my learning journey in AI, computer vision, and movement analysis systems.
+---
 
-Author
+# 🔮 Future Improvements
 
-Pedro Pinheiro
+## Accuracy Improvements
 
-Building projects in:
+* Train a custom machine learning model
+* Reduce false positives
+* Improve camera-angle robustness
 
-AI
-Computer Vision
-Robotics
-Machine Learning
+---
+
+## More Kick Types
+
+Planned kick support:
+
+🥋 Front Kick
+
+🥋 Roundhouse Kick
+
+🥋 Side Kick
+
+🥋 Back Kick
+
+🥋 Axe Kick
+
+---
+
+## Performance Metrics
+
+Future statistics:
+
+📈 Kick speed
+
+📈 Kick height
+
+📈 Reaction time
+
+📈 Accuracy score
+
+📈 Training history
+
+---
+
+## VR Integration
+
+* Real-time VR sparring interaction
+* Motion-controlled environments
+* AI training assistant
+
+---
+
+## Deployment
+
+* Web application
+* Mobile application
+* Cloud-based analytics dashboard
+
+---
+
+# 📌 Current Status
+
+🚧 Active Development
+
+This project is currently under development as part of my learning journey in:
+
+* Artificial Intelligence
+* Computer Vision
+* Robotics
+* Machine Learning
+
+---
+
+# 👨‍💻 Author
+
+**Pedro Pinheiro**
+
+Building projects focused on:
+
+🤖 AI
+
+👁 Computer Vision
+
+🚀 Robotics
+
+📊 Machine Learning
+
+*"Building systems that turn movement into data."*
+
