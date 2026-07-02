@@ -4,9 +4,11 @@ from mediapipe.tasks.python.vision import drawing_styles
 from mediapipe.tasks.python import vision
 import cv2 as cv
 
+kicking = False
+
 def calculate_angle(a, b, c):
 
-    radians = np.arctan2(c.y - b.y, c.x - b.x) - np.arctan2(a.y - b.y, a.x - b.x) - np.arctan2(a.y - b.y, a.x - b.x)
+    radians = np.arctan2(c.y - b.y, c.x - b.x) - np.arctan2(a.y - b.y, a.x - b.x)
     angle = np.abs(radians * 180.0 / np.pi)
 
     if angle > 180.0:
@@ -32,6 +34,16 @@ def drawing_landmarks(imageRGB, detected_result):
             pose_connections_style)
     return annotated_image
 
+def kick_state(imageRGB, hip, knee, ankle):
+     angle = calculate_angle(hip, knee, ankle)
+     if angle > 30 and angle < 60 and kicking == False:
+        cv.putText(imageRGB, "Preparing Kick", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        return False
+     
+     elif angle < 30:
+        cv.putText(imageRGB, "Kicking", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        return True
+     
 
 def kick_analyzer(imageRGB, detected_result):
     if detected_result.pose_landmarks:
@@ -50,25 +62,26 @@ def kick_analyzer(imageRGB, detected_result):
 
         left_foot = first_person_landmarks[31]
         right_foot = first_person_landmarks[32]
-
-        if right_knee.visibility > 0.5 and right_ankle.visibility > 0.5:
-            angle = calculate_angle(right_hip, right_knee, right_ankle)
-            if angle > 20 and angle < 100:
-                cv.putText(imageRGB, "Preparing Kick Right", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        
+        if right_knee.visibility > 0.3 and right_foot.visibility > 0.3:
+            kicking = kick_state(imageRGB, right_hip, right_knee, right_ankle)
+            
         if left_knee.visibility > 0.5 and left_ankle.visibility > 0.5:
-            angle = calculate_angle(left_hip, left_knee, left_ankle)
-            if angle > 120 and angle < 180:
-                cv.putText(imageRGB, "Preparing Kick Left", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            kicking = kick_state(imageRGB, left_hip, left_knee, left_ankle)
 
-        if right_ankle.visibility > 0.5 and right_foot.visibility > 0.5:
-            angle = calculate_angle(right_ankle, right_foot, right_hip)
-            if angle > 90 and angle < 180:
-                cv.putText(imageRGB, "Kicking Right", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         
-        if left_ankle.visibility > 0.5 and left_foot.visibility > 0.5:
-            angle = calculate_angle(left_ankle, left_foot, left_hip)
-            if angle > 90 and angle < 180:
-                cv.putText(imageRGB, "Kicking Left", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv.putText(imageRGB, f'right_hip_X: {right_hip.x:.2f}, right_hip_Y: {right_hip.y:.2f}', (20, 100), cv.FONT_HERSHEY_SIMPLEX,   0.4, (0, 0, 255), 2)
+        cv.putText(imageRGB, f'right_knee_X: {right_knee.x:2f}, right_knee_Y: {right_knee.y:.2f}', (20, 150), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
+        cv.putText(imageRGB, f'right_foot_X: {right_ankle.x:.2f}, right_ankle_Y: {right_ankle.y:.2f}', (20, 200), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
+        cv.putText(imageRGB, f"angle: {calculate_angle(right_hip, right_knee, right_ankle)}", (20, 250), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
 
+        cv.putText(imageRGB, f'left_hip_X: {left_hip.x:.2f}, left_hip_Y: {left_hip.y:.2f}', (20, 300), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
+        cv.putText(imageRGB, f'left_knee_X: {left_knee.x:.2f}, left_knee_Y: {left_knee.y:.2f}', (20, 350), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
+        cv.putText(imageRGB, f'left_ankle_X: {left_ankle.x:.2f}, left_ankle_Y: {left_ankle.y:.2f}', (20, 400), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
+        cv.putText(imageRGB, f"angle: {calculate_angle(left_hip, left_knee, left_ankle)}", (20, 450), cv.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
+    
+    #Note to self:
+    #Calcular quando ela tiver estendida -> chute
+    #Calcula quando ela tiver se estendendo -> quase chutando -> intervalo de valores, se tiver dentro desses valores ta estendendo
+    #Calcular volta -> finished kicking return to preparing kick
+    #Pe no chao -> finished kick
     return imageRGB

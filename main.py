@@ -11,7 +11,7 @@ base_options = python.BaseOptions(model_asset_path='pose_landmarker_heavy.task')
 options = vision.PoseLandmarkerOptions(base_options=base_options, output_segmentation_masks=True)
 detector = vision.PoseLandmarker.create_from_options(options)
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture("kicking.mp4")
 
 while True:
     ret, frame = cap.read()
@@ -34,7 +34,7 @@ while True:
 
     cv.imshow('Output', cv.cvtColor(annotated_image, cv.COLOR_RGB2BGR))
 
-    if cv.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(100) & 0xFF == ord('q'):
         break
 
 cap.release()
