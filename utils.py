@@ -4,10 +4,13 @@ from mediapipe.tasks.python.vision import drawing_styles
 from mediapipe.tasks.python import vision
 import cv2 as cv
 
-kicking = False
+text = ""
+text_left = ""
+text_right = ""
+kicking_left = False
+kicking_right = False
 
 def calculate_angle(a, b, c):
-
     radians = np.arctan2(c.y - b.y, c.x - b.x) - np.arctan2(a.y - b.y, a.x - b.x)
     angle = np.abs(radians * 180.0 / np.pi)
 
@@ -34,18 +37,39 @@ def drawing_landmarks(imageRGB, detected_result):
             pose_connections_style)
     return annotated_image
 
-def kick_state(imageRGB, hip, knee, ankle):
-     angle = calculate_angle(hip, knee, ankle)
-     if angle > 30 and angle < 60 and kicking == False:
-        cv.putText(imageRGB, "Preparing Kick", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        return False
-     
-     elif angle < 30:
-        cv.putText(imageRGB, "Kicking", (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-        return True
+def kick_state(hip, knee, ankle, kicking, previous_angle=None):
+    angle = calculate_angle(hip, knee, ankle)
+    global text
+    if previous_angle is not None:
+
+        # Leg is extending
+        if angle < 30:
+            text = "Kicking"
+            kicking = True
+
+        # Leg is retracting
+        elif kicking and angle > previous_angle:
+            text = "Finishing Kick"
+
+        # Back to chamber position
+        elif 30 < angle < 60 and not kicking:
+            text = "Preparing Kick"
+
+        # Leg is almost straight again
+        elif kicking and angle > 90:
+            text = "Finished Kick"
+            kicking = False
+
+    previous_angle = angle
+
+    return text, kicking, previous_angle
      
 
-def kick_analyzer(imageRGB, detected_result):
+def kick_analyzer(imageRGB, detected_result, previous_angle_left, previous_angle_right):
+    global text_left
+    global text_right
+    global kicking_left
+    global kicking_right
     if detected_result.pose_landmarks:
 
         imageRGB = imageRGB.copy()
@@ -63,10 +87,32 @@ def kick_analyzer(imageRGB, detected_result):
         left_foot = first_person_landmarks[31]
         right_foot = first_person_landmarks[32]
         if right_knee.visibility > 0.3 and right_foot.visibility > 0.3:
-            kicking = kick_state(imageRGB, right_hip, right_knee, right_ankle)
+            text_right, kicking_right, previous_angle_right = kick_state(right_hip, right_knee, right_ankle, kicking_right, previous_angle_right)
             
-        if left_knee.visibility > 0.5 and left_ankle.visibility > 0.5:
-            kicking = kick_state(imageRGB, left_hip, left_knee, left_ankle)
+        if left_knee.visibility > 0.3 and left_ankle.visibility > 0.3:
+            text_left, kicking_left, previous_angle_left = kick_state(left_hip, left_knee, left_ankle, kicking_left, previous_angle_left)
+        
+        if text_left != "":
+            cv.putText(
+                imageRGB,
+                text_left,
+                (20, 50),
+                cv.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 255),
+                2
+            )
+        
+        if text_right != "":
+            cv.putText(
+                imageRGB,
+                text_right,
+                (imageRGB.shape[1] - 300, 50),
+                cv.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 0, 0),
+                2
+            )
 
         
         cv.putText(imageRGB, f'right_hip_X: {right_hip.x:.2f}, right_hip_Y: {right_hip.y:.2f}', (20, 100), cv.FONT_HERSHEY_SIMPLEX,   0.4, (0, 0, 255), 2)
@@ -84,4 +130,4 @@ def kick_analyzer(imageRGB, detected_result):
     #Calcula quando ela tiver se estendendo -> quase chutando -> intervalo de valores, se tiver dentro desses valores ta estendendo
     #Calcular volta -> finished kicking return to preparing kick
     #Pe no chao -> finished kick
-    return imageRGB
+    return imageRGB, previous_angle_left, previous_angle_right

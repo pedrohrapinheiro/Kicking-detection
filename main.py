@@ -11,8 +11,10 @@ base_options = python.BaseOptions(model_asset_path='pose_landmarker_heavy.task')
 options = vision.PoseLandmarkerOptions(base_options=base_options, output_segmentation_masks=True)
 detector = vision.PoseLandmarker.create_from_options(options)
 
-cap = cv.VideoCapture("kicking.mp4")
+previous_angle_left = None
+previous_angle_right = None
 
+cap = cv.VideoCapture("kicking.mp4")
 while True:
     ret, frame = cap.read()
 
@@ -30,11 +32,11 @@ while True:
 
     annotated_image = drawing_landmarks(mp_image.numpy_view(), detected_result)
 
-    annotated_image = kick_analyzer(annotated_image, detected_result)
+    annotated_image, previous_angle_left, previous_angle_right = kick_analyzer(annotated_image, detected_result, previous_angle_left, previous_angle_right)
 
     cv.imshow('Output', cv.cvtColor(annotated_image, cv.COLOR_RGB2BGR))
 
-    if cv.waitKey(100) & 0xFF == ord('q'):
+    if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
